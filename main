@@ -1,46 +1,70 @@
 package com.company;
 
-// Java program to illustrate
-// open cmd prompt
 
-import javax.net.ssl.SSLContext;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Arrays;
+
 
 public class Main {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
-        final char UPDOWN_CODE = 'U';
+        Main main = new Main();
+
+        final char UPDOWN_CODE = 'R';
+        final char URL_CODE = 'U';
         final char SSL_CODE = 'S';
+        final char GEO_CODE = 'G';
         final char OTHER_CODE = 'O';
         final char EXIT_CODE = 'E';
         final char HELP_CODE = '?';
         char userAction;
-        String prompt = "Check if website is 'U'P, Check 'S'SL Certificate, 'E'xit   ";
-        System.out.println(prompt);
+        char userAction1;
+        final String PROMPT_ACTION = "'U'rl Checker, Check if website is 'R'unning, Check 'S'SL Certificate, Find 'G'eolocation of website, " +
+                "E'xit   ";
+        final String URL_ACTION = "Please enter the url you want to check: ";
+        userAction = getAction(PROMPT_ACTION);
+        userAction1 = getAction1(URL_ACTION);
 
-
-        Scanner scnr = new Scanner(System.in);
-        String answer = "";
-        answer = scnr.nextLine().toUpperCase() + " ";
-        char firstChar = answer.charAt(0);
-
-        userAction = firstChar;
-
-//curl ipinfo.io/216.58.194.46
-        //openssl s_client -connect server.yourwebhoster.eu:443
 
 
         while (userAction != EXIT_CODE) {
             switch (userAction) {
+                case URL_CODE:
+                    String userAction12 = String.valueOf(userAction1);
+
+                    System.out.println("Input the url with its https or http attatchment if applicable");
+
+                    String urlName = "https";
+
+                    int count=0;
+
+                    while(userAction12.contains(urlName)){
+                        userAction12=userAction12.substring(userAction12.indexOf(urlName)+urlName.length(), userAction12.length()-1);
+                        count++;
+                    }
+                    if(count>0){
+                        System.out.println("String "+userAction12+" exists, occures "+count +" times.");
+                    }else{
+                        System.out.println("String "+urlName+" does not exists.");
+                    }
+                    break;
+
+
+
+
                 case UPDOWN_CODE:
                     String s = null;
                     try {
 
                         // run the Unix "ps -ef" command
                         // using the Runtime exec method:
-                        Process p = Runtime.getRuntime().exec("ping google.com");
+                        Process p = Runtime.getRuntime().exec("ping " + userAction1);
 
                         BufferedReader stdInput = new BufferedReader(new
                                 InputStreamReader(p.getInputStream()));
@@ -60,11 +84,64 @@ public class Main {
                         e.printStackTrace();
                         System.exit(-1);
                     }
+                case GEO_CODE:
+                    s = null;
+                    try {
+
+                        // run the Unix "ps -ef" command
+                        // using the Runtime exec method:
+                        Process p = Runtime.getRuntime().exec("curl ipinfo.io" + userAction1);
+
+                        BufferedReader stdInput = new BufferedReader(new
+                                InputStreamReader(p.getInputStream()));
+
+                        BufferedReader stdError = new BufferedReader(new
+                                InputStreamReader(p.getErrorStream()));
+
+                        // read the output from the command
+                        System.out.println("Here is the standard output of the command:\n");
+                        while ((s = stdInput.readLine()) != null) {
+                            System.out.println(s);
+                        }
+                        System.exit(0);
+
+                    } catch (IOException e) {
+                        System.out.println("exception happened - here's what I know: ");
+                        e.printStackTrace();
+                        System.exit(-1);
+                    }
+
+
                 case SSL_CODE:
                     break;
             }
 
+            userAction = getAction(PROMPT_ACTION);
         }
+    }
+
+    public static char getAction(String prompt) {
+        Scanner scnr = new Scanner(System.in);
+        String answer = "";
+        System.out.println(prompt);
+        answer = scnr.nextLine().toUpperCase() + " ";
+        char firstChar = answer.charAt(0);
+        return firstChar;
+    }
+
+    public static char getAction1 (String URL){
+        Scanner scnr = new Scanner(System.in);
+        String urlChecker = "";
+        System.out.println(URL);
+        urlChecker = scnr.nextLine().toLowerCase() + " ";
+        char firstChar1 = urlChecker.charAt(0);
+        return firstChar1;
+    }
+
+    }
+
+
+
 
 
         /**class runCMD {
@@ -103,5 +180,4 @@ public class Main {
                 }
             }
         }*/
-    }
-}
+   
