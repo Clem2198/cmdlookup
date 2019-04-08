@@ -1,5 +1,7 @@
 package com.company;
 
+import java.io.BufferedWriter;
+import java.io.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,9 +11,25 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Arrays;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 
+import java.net.URL;
+import java.security.SecureRandom;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 public class Main {
+
 
     public static void main(String[] args) {
 
@@ -21,7 +39,6 @@ public class Main {
         final char URL_CODE = 'U';
         final char SSL_CODE = 'S';
         final char GEO_CODE = 'G';
-        final char OTHER_CODE = 'O';
         final char EXIT_CODE = 'E';
         final char HELP_CODE = '?';
         char userAction;
@@ -46,19 +63,18 @@ public class Main {
                     String string = userAction12;
                     String keyword = "https";
 
-                        if (userAction12.contains("https")) {
-                            System.out.println("The website passes our test as it includes https within the url");
-                            break;
-                        } else if (userAction12.contains("http")) {
-                            System.out.println("WARNING!!!! This url does not include https within its protocols. Proceed with caution.");
-                            break;
-                        } else {
-                                System.out.println("The url provided does not include the protocol identifier (http or https)");
-                            userAction1 = getAction1(URL_ACTION);
-                        }
+                    if (userAction12.contains("https")) {
+                        System.out.println("The website passes our test as it includes https within the url");
+                        break;
+                    } else if (userAction12.contains("http")) {
+                        System.out.println("WARNING!!!! This url does not include https within its protocols. Proceed with caution.");
+                        break;
+                    } else {
+                        System.out.println("The url provided does not include the protocol identifier (http or https)");
+                        userAction1 = getAction1(URL_ACTION);
+                    }
 
                     break;
-
 
 
                 case UPDOWN_CODE:
@@ -70,9 +86,6 @@ public class Main {
                         System.out.println("Please only type the url without the protocol identifier (http or https)");
                         Process p = Runtime.getRuntime().exec("ping " + userAction1);
 
-
-
-
                         BufferedReader stdInput = new BufferedReader(new
                                 InputStreamReader(p.getInputStream()));
 
@@ -82,20 +95,19 @@ public class Main {
                         // read the output from the command
                         System.out.println("Here is the standard output of the command:\n");
                         while ((s = stdInput.readLine()) != null) {
-                            String s1 =s;
-
-                            PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
-                            writer.println(s1);
-                            writer.close();
-
-
-
-
-
-
-
+                            String s1 = s;
+                            if (s1.contains("0%")) {
+                                System.out.println("The website is running");
+                                break;
+                            } else if (s1.contains("25%")) {
+                                System.out.println("The website is running, but your connecion is not fully activated");
+                                break;
+                            } else {
+                                System.out.println("No connection");
+                            }
 
                         }
+
                         System.exit(0);
 
                     } catch (IOException e) {
@@ -132,12 +144,19 @@ public class Main {
 
 
                 case SSL_CODE:
-                    break;
+                    SSLTest methodCalling = new SSLTest();
+                    System.out.println(methodCalling);
+
+
+
+            }
+
             }
 
             userAction = getAction(PROMPT_ACTION);
         }
-    }
+
+
 
     public static char getAction(String prompt) {
         Scanner scnr = new Scanner(System.in);
@@ -154,9 +173,59 @@ public class Main {
         System.out.println(URL);
         urlChecker = scnr.nextLine().toLowerCase() + " ";
         return urlChecker;
-    }
+
+
+
 
     }
 
+
+    }
+class SSLTest{
+
+    public static void  main(String [] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        Scanner custName = new Scanner(System.in);
+        System.out.println("Please enter url://");
+        String URL = sc.nextLine();
+        String ht1 = ("https://www.");
+        String fullLink = ht1+URL;
+        // configure the SSLContext with a TrustManager
+        SSLContext ctx = SSLContext.getInstance("TLS");
+        ctx.init(new KeyManager[0], new TrustManager[] {new DefaultTrustManager()}, new SecureRandom());
+        SSLContext.setDefault(ctx);
+
+        URL url = new URL(fullLink);
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        conn.setHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String arg0, SSLSession arg1) {
+                return true;
+            }
+        });
+        System.out.println(conn.getResponseCode());
+        Certificate[] certs = conn.getServerCertificates();
+        for (Certificate cert :certs){
+            System.out.println(cert.getType());
+            System.out.println(cert);
+        }
+
+        conn.disconnect();
+    }
+
+    private static class DefaultTrustManager implements X509TrustManager {
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+    }
+}
 
 
