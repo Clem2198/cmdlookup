@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Arrays;
 
+import java.io.*;
 
 public class Main {
 
@@ -24,7 +25,7 @@ public class Main {
         final char EXIT_CODE = 'E';
         final char HELP_CODE = '?';
         char userAction;
-        char userAction1;
+        String userAction1;
         final String PROMPT_ACTION = "'U'rl Checker, Check if website is 'R'unning, Check 'S'SL Certificate, Find 'G'eolocation of website, " +
                 "E'xit   ";
         final String URL_ACTION = "Please enter the url you want to check: ";
@@ -38,23 +39,25 @@ public class Main {
                 case URL_CODE:
                     String userAction12 = String.valueOf(userAction1);
 
-                    System.out.println("Input the url with its https or http attatchment if applicable");
 
                     String urlName = "https";
 
-                    int count=0;
 
-                    while(userAction12.contains(urlName)){
-                        userAction12=userAction12.substring(userAction12.indexOf(urlName)+urlName.length(), userAction12.length()-1);
-                        count++;
-                    }
-                    if(count>0){
-                        System.out.println("String "+userAction12+" exists, occures "+count +" times.");
-                    }else{
-                        System.out.println("String "+urlName+" does not exists.");
-                    }
+                    String string = userAction12;
+                    String keyword = "https";
+
+                        if (userAction12.contains("https")) {
+                            System.out.println("The website passes our test as it includes https within the url");
+                            break;
+                        } else if (userAction12.contains("http")) {
+                            System.out.println("WARNING!!!! This url does not include https within its protocols. Proceed with caution.");
+                            break;
+                        } else {
+                                System.out.println("The url provided does not include the protocol identifier (http or https)");
+                            userAction1 = getAction1(URL_ACTION);
+                        }
+
                     break;
-
 
 
 
@@ -64,7 +67,11 @@ public class Main {
 
                         // run the Unix "ps -ef" command
                         // using the Runtime exec method:
+                        System.out.println("Please only type the url without the protocol identifier (http or https)");
                         Process p = Runtime.getRuntime().exec("ping " + userAction1);
+
+
+
 
                         BufferedReader stdInput = new BufferedReader(new
                                 InputStreamReader(p.getInputStream()));
@@ -75,7 +82,19 @@ public class Main {
                         // read the output from the command
                         System.out.println("Here is the standard output of the command:\n");
                         while ((s = stdInput.readLine()) != null) {
-                            System.out.println(s);
+                            String s1 =s;
+
+                            PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
+                            writer.println(s1);
+                            writer.close();
+
+
+
+
+
+
+
+
                         }
                         System.exit(0);
 
@@ -129,55 +148,15 @@ public class Main {
         return firstChar;
     }
 
-    public static char getAction1 (String URL){
+    public static String getAction1 (String URL){
         Scanner scnr = new Scanner(System.in);
         String urlChecker = "";
         System.out.println(URL);
         urlChecker = scnr.nextLine().toLowerCase() + " ";
-        char firstChar1 = urlChecker.charAt(0);
-        return firstChar1;
+        return urlChecker;
     }
 
     }
 
 
 
-
-
-        /**class runCMD {
-            public void main(String[] args) {
-                String s = null;
-
-                try {
-
-                    // run the Unix "ps -ef" command
-                    // using the Runtime exec method:
-                    Process p = Runtime.getRuntime().exec("ping google.com");
-
-                    BufferedReader stdInput = new BufferedReader(new
-                            InputStreamReader(p.getInputStream()));
-
-                    BufferedReader stdError = new BufferedReader(new
-                            InputStreamReader(p.getErrorStream()));
-
-                    // read the output from the command
-                    System.out.println("Here is the standard output of the command:\n");
-                    while ((s = stdInput.readLine()) != null) {
-                        System.out.println(s);
-                    }
-
-                    // read any errors from the attempted command
-                    System.out.println("Here is the standard error of the command (if any):\n");
-                    while ((s = stdError.readLine()) != null) {
-                        System.out.println(s);
-                    }
-
-                    System.exit(0);
-                } catch (IOException e) {
-                    System.out.println("exception happened - here's what I know: ");
-                    e.printStackTrace();
-                    System.exit(-1);
-                }
-            }
-        }*/
-   
