@@ -53,31 +53,28 @@ public class Main {
 
         while (userAction != EXIT_CODE) {
             switch (userAction) {
+
                 case URL_CODE:
-                    String userAction12 = String.valueOf(userAction1);
-
-
                     String urlName = "https";
+                    String keyword = "http";
 
-
-                    String string = userAction12;
-                    String keyword = "https";
-
-                    if (userAction12.contains("https")) {
+                    if (userAction1.contains(urlName)) {
                         System.out.println("The website passes our test as it includes https within the url");
-                        break;
-                    } else if (userAction12.contains("http")) {
+                        return ;
+                    } else if (userAction1.contains(keyword)) {
                         System.out.println("WARNING!!!! This url does not include https within its protocols. Proceed with caution.");
-                        break;
+                        return ;
                     } else {
                         System.out.println("The url provided does not include the protocol identifier (http or https)");
-                        userAction1 = getAction1(URL_ACTION);
+                        System.out.println("If the url does not contain a http or https, then we recomend staying away from it");
+                        return ;
                     }
 
-                    break;
+
                 case IP_CODE:
                     String s = null;
                     try {
+                        //System.out.println("Please only include the url without the https or world wide web part");
                         Process p = Runtime.getRuntime().exec("nslookup " + userAction1);
 
                         BufferedReader stdInput = new BufferedReader(new
@@ -107,6 +104,7 @@ public class Main {
                         e.printStackTrace();
                         System.exit(-1);
                     }
+
 
                 case UPDOWN_CODE:
                      s = null;
@@ -148,8 +146,8 @@ public class Main {
                     }
                 case GEO_CODE:
                     s = null;
-                    System.out.println("To search for the location of a website, please provide the IP address of the" +
-                            "website. If uncertaun, please use the 'I' menu option to locate the website's IP address");
+                    //System.out.println("To search for the location of a website, please provide the IP address of the" +
+                           // "website. If uncertaun, please use the 'I' menu option to locate the website's IP address");
                     try {
                         Process p = Runtime.getRuntime().exec("curl ipinfo.io/" + userAction1);
 
@@ -190,6 +188,8 @@ public class Main {
                 case SSL_CODE:
                     SSLTest methodCalling = new SSLTest();
                     System.out.println(methodCalling);
+
+
 
 
                 case EXIT_CODE:
