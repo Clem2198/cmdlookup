@@ -44,8 +44,8 @@ public class Main {
         char userAction;
         String userAction1;
         final String PROMPT_ACTION = "'U'rl Checker, Check if website is 'R'unning, 'I'P address finer, Check 'S'SL Certificate, Find 'G'eolocation of website, " +
-                "E'xit   ";
-        final String URL_ACTION = "Please enter the url you want to check: ";
+                "E'xit";
+        final String URL_ACTION = "Please enter the url or IP address that you want to check: ";
         userAction = getAction(PROMPT_ACTION);
         userAction1 = getAction1(URL_ACTION);
 
@@ -148,8 +148,10 @@ public class Main {
                     }
                 case GEO_CODE:
                     s = null;
+                    System.out.println("To search for the location of a website, please provide the IP address of the" +
+                            "website. If uncertaun, please use the 'I' menu option to locate the website's IP address");
                     try {
-                        Process p = Runtime.getRuntime().exec("nslookup" + userAction1);
+                        Process p = Runtime.getRuntime().exec("curl ipinfo.io/" + userAction1);
 
                         BufferedReader stdInput = new BufferedReader(new
                                 InputStreamReader(p.getInputStream()));
@@ -161,9 +163,22 @@ public class Main {
                         // read the output from the command
                         System.out.println("Here is the standard output of the command:\n");
                         while ((s = stdInput.readLine()) != null) {
-                            System.out.println(s);
+                            System.out.println("");
+
+                            if (s.contains("US")){
+                                System.out.println("Site contains a valid country");
+                            }
+                            else if (s.contains("Atlanta")){
+                                System.out.println("Site contains valid state");
+                            }
+
+                            else {System.out.println("Field does not contain any information");}
                         }
+                        System.out.println("If a website does not contain a valid country or state, the website still may be safe. " +
+                                "Please use our other options for further investigation");
+
                         System.exit(0);
+
 
                     } catch (IOException e) {
                         System.out.println("exception happened - here's what I know: ");
@@ -176,6 +191,9 @@ public class Main {
                     SSLTest methodCalling = new SSLTest();
                     System.out.println(methodCalling);
 
+
+                case EXIT_CODE:
+                    break;
 
 
             }
