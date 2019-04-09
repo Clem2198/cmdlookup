@@ -37,13 +37,13 @@ public class Main {
 
         final char UPDOWN_CODE = 'R';
         final char URL_CODE = 'U';
+        final char IP_CODE = 'I';
         final char SSL_CODE = 'S';
         final char GEO_CODE = 'G';
         final char EXIT_CODE = 'E';
-        final char HELP_CODE = '?';
         char userAction;
         String userAction1;
-        final String PROMPT_ACTION = "'U'rl Checker, Check if website is 'R'unning, Check 'S'SL Certificate, Find 'G'eolocation of website, " +
+        final String PROMPT_ACTION = "'U'rl Checker, Check if website is 'R'unning, 'I'P address finer, Check 'S'SL Certificate, Find 'G'eolocation of website, " +
                 "E'xit   ";
         final String URL_ACTION = "Please enter the url you want to check: ";
         userAction = getAction(PROMPT_ACTION);
@@ -75,10 +75,41 @@ public class Main {
                     }
 
                     break;
+                case IP_CODE:
+                    String s = null;
+                    try {
+                        Process p = Runtime.getRuntime().exec("nslookup " + userAction1);
 
+                        BufferedReader stdInput = new BufferedReader(new
+                                InputStreamReader(p.getInputStream()));
+
+
+                        BufferedReader stdError = new BufferedReader(new
+                                InputStreamReader(p.getErrorStream()));
+
+                        // read the output from the command
+                        System.out.println("Here is the standard output of the command:\n");
+                        System.out.println("The user's ip address is listed first. The website IP address is listred second");
+                        while ((s = stdInput.readLine()) != null) {
+                            String str1=s.replaceAll("[\r\n]+", " ");
+                            String rs = str1.substring(str1.lastIndexOf('e') + 1);
+                            String rs1 = rs.substring(rs.lastIndexOf('m') + 1);
+                            String rs12 = rs1.substring(rs1.lastIndexOf(':') + 1);
+                            String rs13 = rs12.substring(rs12.lastIndexOf('n') + 1);
+                            rs13 = rs13.replaceAll("\\s+","");
+                            System.out.println(rs13);
+                        }
+                        System.exit(0);
+
+
+                    } catch (IOException e) {
+                        System.out.println("exception happened - here's what I know: ");
+                        e.printStackTrace();
+                        System.exit(-1);
+                    }
 
                 case UPDOWN_CODE:
-                    String s = null;
+                     s = null;
                     try {
 
                         // run the Unix "ps -ef" command
@@ -118,13 +149,11 @@ public class Main {
                 case GEO_CODE:
                     s = null;
                     try {
-
-                        // run the Unix "ps -ef" command
-                        // using the Runtime exec method:
-                        Process p = Runtime.getRuntime().exec("curl ipinfo.io" + userAction1);
+                        Process p = Runtime.getRuntime().exec("nslookup" + userAction1);
 
                         BufferedReader stdInput = new BufferedReader(new
                                 InputStreamReader(p.getInputStream()));
+
 
                         BufferedReader stdError = new BufferedReader(new
                                 InputStreamReader(p.getErrorStream()));
@@ -151,10 +180,10 @@ public class Main {
 
             }
 
-            }
-
-            userAction = getAction(PROMPT_ACTION);
         }
+
+        userAction = getAction(PROMPT_ACTION);
+    }
 
 
 
@@ -180,7 +209,7 @@ public class Main {
     }
 
 
-    }
+}
 class SSLTest{
 
     public static void  main(String [] args) throws Exception {
@@ -227,5 +256,4 @@ class SSLTest{
         }
     }
 }
-
 
